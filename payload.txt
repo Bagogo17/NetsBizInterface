@@ -1,0 +1,18 @@
+{
+  "retrieval_ref": "PLWS4434407563129389",
+  "mti": "0340",
+  "process_code": "000000",
+  "amount": "000000000072",
+  "stan": "315096",
+  "transaction_time": "102641",
+  "transaction_date": "1209",
+  "response_code": "00",
+  "approval_code": "315096",
+  "host_tid": "38010801",
+  "host_mid": "11138010800",
+  "SOF_uri": "http://dbslifesg.com/",
+  "currency_code": "SGD",
+  "payment_type_id": "DBSL",
+  "transaction_id": "2181957620",
+  "transaction_status": "04"
+}
