@@ -1,0 +1,7 @@
+com\nets\netsbiz\qri\SqsService.class
+com\nets\netsbiz\qri\SqsConfig.class
+com\nets\netsbiz\qri\SqsMessagePublisherDummy.class
+com\nets\netsbiz\qri\JpaMobUser.class
+com\nets\netsbiz\qri\Controller.class
+com\nets\netsbiz\qri\MobUserDAO.class
+com\nets\netsbiz\qri\Repository.class
