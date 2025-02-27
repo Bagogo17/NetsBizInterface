@@ -11,8 +11,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -64,4 +67,8 @@ public class JpaMobTransaction {
 
     @Column(name = "status", length = 2)
     private String status;
+    @CreationTimestamp
+    private LocalDateTime createdDatetime;
+    @UpdateTimestamp
+    private LocalDateTime modifiedDatetime;
 }

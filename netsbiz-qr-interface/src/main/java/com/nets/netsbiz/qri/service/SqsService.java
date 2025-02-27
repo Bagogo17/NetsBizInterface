@@ -1,13 +1,10 @@
 package com.nets.netsbiz.qri.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nets.netsbiz.qri.core.MobTransaction;
-import com.nets.netsbiz.qri.core.MobTransactionDto;
 import com.nets.netsbiz.qri.core.MobTransactionDtoMapper;
 import com.nets.netsbiz.qri.core.MobTransactionRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joda.time.DateTime;
 import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityRequest;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
 import software.amazon.awssdk.services.sqs.model.Message;
@@ -33,13 +30,13 @@ public class SqsService {
     @Autowired
     ProcessMessageService processMessageService;
 
-    @Value("${aws.accessKeyId}")
+    @Value("${aws.sqs.accessKeyId}")
     private String accessKeyId;
 
-    @Value("${aws.secretKey}")
+    @Value("${aws.sqs.secretKey}")
     private String secretKey;
 
-    @Value("${aws.sqs.queueUrl}")
+    @Value("${aws.sqs.endpoint}")
     private String queueUrl;
 
     @Value("${aws.sqs.visibility}")
@@ -54,24 +51,27 @@ public class SqsService {
                 .visibilityTimeout(30)
                 .build();
 
-        List<Message> messages = sqsClient.receiveMessage(receiveMessageRequest).messages();
-        ObjectMapper objectMapper = new ObjectMapper();
-        log.info("[SQS] Message Retrieved From Queue -{}", messages.size());
-        for (Message message : messages) {
-            try {
-                processMessageService.processMessage(message);
-                deleteMessage(message);
-            } catch (Exception e) {
-                log.error("[SQS] Failed processing message after all retries", e);
-                ChangeMessageVisibilityRequest visibilityRequest = ChangeMessageVisibilityRequest.builder()
-                        .queueUrl(queueUrl)
-                        .receiptHandle(message.receiptHandle())
-                        .visibilityTimeout(messageVisibility)
-                        .build();
-                sqsClient.changeMessageVisibility(visibilityRequest);
-                log.error("[SQS] Set Message Visibility to {}",messageVisibility);
+        for (int i = 0; i < 10; i++) {
+            List<Message> messages = sqsClient.receiveMessage(receiveMessageRequest).messages();
+            log.info("[SQS] Message Retrieved From Queue {} , {} , thread-name-{}",messages.size(), DateTime.now(), Thread.currentThread().getName());
+            for (Message message : messages) {
+                try {
+                    processMessageService.processMessage(message);
+                    deleteMessage(message);
+                    log.info("[SQS] Message Deleted After Successfully Processed");
+                } catch (Exception e) {
+                    log.error("[SQS] Failed processing message after all retries", e);
+                    ChangeMessageVisibilityRequest visibilityRequest = ChangeMessageVisibilityRequest.builder()
+                            .queueUrl(queueUrl)
+                            .receiptHandle(message.receiptHandle())
+                            .visibilityTimeout(messageVisibility)
+                            .build();
+                    sqsClient.changeMessageVisibility(visibilityRequest);
+                    log.error("[SQS] Set Message Visibility to {}", messageVisibility);
+                }
             }
         }
+
     }
 
     private void deleteMessage(Message message) {

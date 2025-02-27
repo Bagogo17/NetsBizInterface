@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -27,4 +28,6 @@ public class MobTransaction {
     private String transactionDate;
     private String transactionTime;
     private String status;
+    private LocalDateTime createdDatetime;
+    private LocalDateTime modifiedDatetime;
 }

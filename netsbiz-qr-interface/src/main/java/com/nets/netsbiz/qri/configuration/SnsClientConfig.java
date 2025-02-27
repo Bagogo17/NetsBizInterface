@@ -11,10 +11,10 @@ import software.amazon.awssdk.services.sns.SnsClient;
 @Configuration
 public class SnsClientConfig {
 
-    @Value("${aws.accessKeyId}")
+    @Value("${aws.sns.accessKeyId}")
     private String accessKeyId;
 
-    @Value("${aws.secretKey}")
+    @Value("${aws.sns.secretKey}")
     private String secretKey;
 
     @Bean

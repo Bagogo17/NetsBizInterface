@@ -20,24 +20,25 @@ public class ThreadPoolConfig implements SchedulingConfigurer {
 
     @Override
     public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
-        taskRegistrar.setTaskScheduler(taskScheduler(taskExecutor()));
+        taskRegistrar.setTaskScheduler(taskScheduler());
     }
 
     @Bean
-    public ThreadPoolTaskExecutor taskExecutor() {
-        ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
-        threadPoolTaskExecutor.setCorePoolSize(numberOfPool);
-        threadPoolTaskExecutor.setMaxPoolSize(numberOfPool);
-        threadPoolTaskExecutor.initialize();
-        return  threadPoolTaskExecutor;
+    public ThreadPoolTaskScheduler taskScheduler() {
+     ThreadPoolTaskScheduler threadPoolTaskExecutor = new ThreadPoolTaskScheduler();
+     threadPoolTaskExecutor.setThreadNamePrefix("netsbiz-qr-thread-");
+     threadPoolTaskExecutor.setPoolSize(4);
+     threadPoolTaskExecutor.initialize();
+     return  threadPoolTaskExecutor;
     }
 
-    @Bean
-    public TaskScheduler taskScheduler(ThreadPoolTaskExecutor threadPoolTaskExecutor) {
-        ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
-        scheduler.setPoolSize(numberOfPool);
-        scheduler.setThreadFactory(threadPoolTaskExecutor);
-        scheduler.initialize();
-        return scheduler;
-    }
+//    @Bean
+//    public TaskScheduler taskScheduler(ThreadPoolTaskExecutor threadPoolTaskExecutor) {
+//        ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
+//        scheduler.setPoolSize(numberOfPool);
+//        scheduler.setThreadNamePrefix("netsbizqr-thread-");
+//        scheduler.setThreadFactory(threadPoolTaskExecutor);
+//        scheduler.initialize();
+//        return scheduler;
+//    }
 }

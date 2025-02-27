@@ -16,15 +16,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import software.amazon.awssdk.services.sqs.model.Message;
 
-import java.nio.ByteBuffer;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -47,11 +43,12 @@ public class ProcessMessageService {
     SnsService snsService;
     @Autowired
     RestTemplate restTemplate;
+    @Autowired
+    ObjectMapper objectMapper;
 
     public void processMessage(Message message) {
 
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
             MobTransactionDto mobTransactionDto = objectMapper.readValue(message.body(), MobTransactionDto.class);
             MobTransaction mobTransaction = MobTransactionDtoMapper.INSTANCE.dtoToDomain(mobTransactionDto);
 
@@ -76,7 +73,7 @@ public class ProcessMessageService {
     }
 
     private List<UUID> getListOfActiveUser() {
-        String url = "";
+        String url = "http://localhost:8080/getActiveUsers";
         return restTemplate.exchange(url, HttpMethod.GET, null,
                 new ParameterizedTypeReference<List<UUID>>() {
                 }).getBody();

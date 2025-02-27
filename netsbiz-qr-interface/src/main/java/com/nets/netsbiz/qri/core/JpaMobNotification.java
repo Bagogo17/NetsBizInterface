@@ -29,11 +29,11 @@ public class JpaMobNotification {
 
     private String tid;
     private UUID sentToMobUserId;
-    private LocalDateTime sendTime;
+    private LocalDateTime sentTime;
     private LocalDateTime receivedTime;
     private LocalDateTime openedTime;
-    private LocalDateTime createdDateTime;
-    private LocalDateTime modifiedDateTime;
+    private LocalDateTime createdDatetime;
+    private LocalDateTime modifiedDatetime;
     private String notificationType;
     private UUID qrTransactionId;
 }

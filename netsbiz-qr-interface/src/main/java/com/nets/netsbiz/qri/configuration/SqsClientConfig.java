@@ -13,10 +13,10 @@ import java.net.URI;
 @Configuration
 public class SqsClientConfig {
 
-    @Value("${aws.accessKeyId}")
+    @Value("${aws.sqs.accessKeyId}")
     private String accessKeyId;
 
-    @Value("${aws.secretKey}")
+    @Value("${aws.sqs.secretKey}")
     private String secretKey;
 
     @Value("${aws.sqs.endpoint}")

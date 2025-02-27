@@ -21,8 +21,8 @@ public class MobNotification {
     private LocalDateTime sentTime;
     private LocalDateTime receivedTime;
     private LocalDateTime openedTime;
-    private LocalDateTime createdDateTime;
-    private LocalDateTime modifiedDateTime;
+    private LocalDateTime createdDatetime;
+    private LocalDateTime modifiedDatetime;
     private String notificationType;
     private UUID qrTransactionId;
 
@@ -30,7 +30,7 @@ public class MobNotification {
         this.tid = tid;
         this.sentToMobUserId = sentToMobUserId;
         this.sentTime = LocalDateTime.now();
-        this.createdDateTime = LocalDateTime.now();
+        this.createdDatetime = LocalDateTime.now();
         this.notificationType = notificationType;
         this.qrTransactionId = qrTransactionId;
 
