@@ -1,0 +1,18 @@
+{
+  "retrieval_ref": "TEST0917",
+  "mti": "0340",
+  "process_code": "000000",
+  "amount": "000000000123",
+  "stan": "315096",
+  "transaction_time": "125500",
+  "transaction_date": "0917",
+  "response_code": "00",
+  "approval_code": "315096",
+  "host_tid": "38018101",
+  "host_mid": "11138018100",
+  "SOF_uri": "http://dbslifesg.com/",
+  "currency_code": "SGD",
+  "payment_type_id": "MBBP",
+  "transaction_id": "TEST0917",
+  "transaction_status": "04"
+}
