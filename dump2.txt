@@ -42,3 +42,13 @@ RID	TID
 INSERT INTO mkck_master_data_action_history (id, master_data_request_id, domain_class, status, `action`, actor_id, action_timestamp, created_timestamp, edited_timestamp) VALUES('d8a5109a-14ec-4836-ba9d-b1194477a983', '8677142f-b837-4f4e-bd55-786e07f3cb69', 'UserGroup', 'PENDING_APPROVAL', 'SUBMITTED', 'SYSTEM', '2025-06-18 22:36:19', '2025-06-18 22:36:19', '2025-06-18 22:36:19');
 INSERT INTO mkck_master_data_action_history (id, master_data_request_id, domain_class, status, `action`, actor_id, action_timestamp, created_timestamp, edited_timestamp) VALUES('2a5301dd-b003-463b-99de-dc1a761800cb', '8677142f-b837-4f4e-bd55-786e07f3cb69', 'UserGroup', 'PENDING_EFFECTIVE', 'APPROVED', 'SYSTEM', '2025-06-18 22:57:45', '2025-06-18 22:57:45', '2025-06-18 22:57:45');
 INSERT INTO mkck_master_data_action_history (id, master_data_request_id, domain_class, status, `action`, actor_id, action_timestamp, created_timestamp, edited_timestamp) VALUES('96a958b2-ff57-428d-91e3-c67d6b96e485', '8677142f-b837-4f4e-bd55-786e07f3cb69', 'UserGroup', 'EFFECTIVE', 'CREATED/DELETED/UPDATED', 'SYSTEM', '2025-06-18 22:57:45', '2025-06-18 22:57:45', '2025-06-18 22:57:45');
+
+
+
+
+#import <AVFoundation/AVFoundation.h>
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+   [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
+   [[AVAudioSession sharedInstance] setActive:YES error:nil];
+   return YES;
+}
