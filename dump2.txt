@@ -52,3 +52,30 @@ INSERT INTO mkck_master_data_action_history (id, master_data_request_id, domain_
    [[AVAudioSession sharedInstance] setActive:YES error:nil];
    return YES;
 }
+
+
+}else {
+                //Update TIDs List for worker
+                if (!tidList.isEmpty()) {
+                    List<String> existingTids = activeMobUser.getRoles().stream()
+                            .map(MobUserRole::getTid).filter(tid -> tid.contains(tids)).toList();
+                    if (!existingTids.isEmpty()) {
+                        throw new RuntimeException("This user has already been assigned to these terminals: " + existingTids);
+                    }
+                }
+                
+                if(!ridList.isEmpty()) {
+                    List<TerminalInfoDto> terminalInfos =
+                            terminalService.getTerminalsByTids(activeMobUser.getRoles().stream().map(MobUserRole::getTid).collect(Collectors.toSet()), MasterDataStatus.A);
+                    List<String> existingRids = terminalInfos.stream()
+                            .map(TerminalInfoDto::getRid)
+                            .map(RetailerInfo::getRid)
+                            .filter(ridList::contains)
+                            .toList();
+                    
+                    if (!existingRids.isEmpty()) {
+                        throw new RuntimeException("This user has already been assigned to these retailers: " + existingRids);
+                    }
+
+                }
+            }
