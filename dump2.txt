@@ -79,3 +79,114 @@ INSERT INTO mkck_master_data_action_history (id, master_data_request_id, domain_
 
                 }
             }
+
+@Override
+    public CriteriaResponse<QrTransactionRespWithTerminalName> findTransactionsAndTidNameWithFilters(String transactionDate, String transactionFromDate, String transactionToDate, BigDecimal fromAmount, BigDecimal toAmount, String retailId, String[] terminalIds, String[] paymentMethod, String stan, String status, Pageable pageable) {
+        HibernateCriteriaBuilder cb = entityManager.unwrap(Session.class).getCriteriaBuilder();
+        JpaCriteriaQuery<QrTransaction> query = cb.createQuery(QrTransaction.class);
+        Root<QrTransaction> root = query.from(QrTransaction.class);
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        // Transform transactionDate (DDMMYYYY) → YYYYMMDD
+        Expression<String> year = cb.substring(root.get("transactionDate"), 5, 4);  // YYYY
+        Expression<String> month = cb.substring(root.get("transactionDate"), 1, 2); // MM
+        Expression<String> day = cb.substring(root.get("transactionDate"), 3, 2);   // DD
+
+        Expression<String> formattedDate = cb.concat(
+                cb.concat(year, month),
+                day
+        );
+
+        if(transactionDate != null) {
+            predicates.add(cb.equal(root.get("transactionDate"), transactionDate));
+        }
+
+        if (transactionFromDate != null && transactionToDate != null) {
+
+            String fromFormatted = convertMmDdYyyyToYyyyMmDd(transactionFromDate);
+            String toFormatted = convertMmDdYyyyToYyyyMmDd(transactionToDate);
+
+            predicates.add(cb.between(formattedDate, fromFormatted, toFormatted));
+        }
+
+
+        if (fromAmount != null && toAmount != null) {
+            predicates.add(cb.between(root.get("amount"), fromAmount, toAmount));
+        }
+
+        if (fromAmount != null && toAmount == null) {
+            predicates.add(cb.greaterThanOrEqualTo(root.get("amount"), fromAmount));
+        }
+
+        if (toAmount != null && fromAmount == null) {
+            predicates.add(cb.lessThanOrEqualTo(root.get("amount"), toAmount));
+        }
+
+        // Add retail ID filter
+        if (retailId != null && !retailId.isEmpty()) {
+            predicates.add(cb.equal(root.get("mobTerminalRid"), retailId));
+        }
+
+        // Add terminal ID filter
+        if (terminalIds != null && terminalIds.length > 0) {
+            predicates.add(cb.in(root.get("mobTerminalTid"), terminalIds));
+        }
+
+        // Add payment method filter
+//        if (paymentMethod != null && !paymentMethod.isEmpty()) {
+        if (paymentMethod != null && paymentMethod.length > 0) {
+//            predicates.add(cb.equal(root.get("paymentTypeId"), paymentMethod));
+            predicates.add(cb.in(root.get("paymentTypeId"), paymentMethod));
+        }
+
+        // Add STAN filter
+        if (stan != null && !stan.isEmpty()) {
+            predicates.add(cb.equal(root.get("stan"), stan));
+        }
+
+        // Add status filter
+        if (status != null && !status.isEmpty()) {
+            predicates.add(cb.equal(root.get("status"), status));
+        }
+
+        // Apply predicates and sort by transaction_date in descending order
+        query.where(predicates.toArray(new Predicate[0]));
+        //order by the formatted date and time
+        query.orderBy(cb.desc(formattedDate), cb.desc(root.get("transactionTime")));
+
+        // Fetch results with pagination
+        List<QrTransaction> qrTransactionQueryResult = entityManager.createQuery(query)
+                .setFirstResult((int) pageable.getOffset())
+                .setMaxResults(pageable.getPageSize())
+                .getResultList();
+
+        Set<String> terminalIdsQueried = qrTransactionQueryResult.stream().map(QrTransaction::getMobTerminalTid).collect(Collectors.toSet());
+        List<TerminalInfoDto> terminalInfos = terminalService.getTerminalsByTids(terminalIdsQueried, MasterDataStatus.A);
+        Map<String, String> tidToName = terminalInfos.stream().collect(Collectors.toMap(TerminalInfoDto::getTid, TerminalInfoDto::getAlias));
+        List<QrTransactionRespWithTerminalName> results = qrTransactionQueryResult.stream().map(
+                txn -> new QrTransactionRespWithTerminalName(txn, tidToName.getOrDefault(txn.getMobTerminalTid(), txn.getMobTerminalTid()))
+        ).toList();
+
+        // Count query for total records
+        Long total = entityManager.createQuery(query.createCountQuery()).getSingleResult();
+        BigDecimal totalAmount = entityManager.createQuery(query).getResultStream().map(QrTransaction::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        return new CriteriaResponse<>(results, pageable, total, totalAmount);
+    }
+
+
+package com.nets.netsbiz.mob.common.entity;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@AllArgsConstructor
+public class QrTransactionRespWithTerminalName {
+
+    private QrTransaction qrTransaction;
+    private String terminalName;
+}
