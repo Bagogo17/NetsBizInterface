@@ -190,3 +190,39 @@ public class QrTransactionRespWithTerminalName {
     private QrTransaction qrTransaction;
     private String terminalName;
 }
+
+
+import { Platform } from 'react-native';
+import Tts from 'react-native-tts';
+import i18n from './path-to-your-i18n-config'; // adjust the import as needed
+
+export const configureTtsLanguageAndVoice = async () => {
+    try {
+        Tts.stop();
+
+        const initStatus = await Tts.getInitStatus();
+
+        if (i18n.language === 'zh') {
+            await Tts.setDefaultLanguage('zh-CN');
+            if (Platform.OS === 'android') {
+                await Tts.setDefaultVoice('cmn-cn-x-ccc-local');
+            } else {
+                await Tts.setDefaultVoice('com.apple.ttsbundle.Ting-Ting-compact');
+            }
+        } else {
+            await Tts.setDefaultLanguage('en-US');
+            if (Platform.OS === 'android') {
+                await Tts.setDefaultVoice('en-us-x-tpf-local');
+            } else {
+                await Tts.setDefaultVoice('com.apple.voice.compact.en-US.Samantha');
+            }
+        }
+    } catch (err) {
+        if (err.code === 'no_engine') {
+            Tts.requestInstallEngine();
+        } else {
+            console.error('TTS configuration error:', err);
+        }
+    }
+};
+
