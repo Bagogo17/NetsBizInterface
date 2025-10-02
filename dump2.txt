@@ -231,3 +231,6 @@ curl -v -k -X POST -H "Content-Type: application/json"  -H "KeyId: aa06639e-2233
 
 
 curl -v -k -X POST -H "Content-Type: application/json"  -H "KeyId: aa06639e-2233-41df-8d95-7ae5f41ee9c1" -H "Sign: 3qPdq+ATkoeuS+Lk1CE2+V/qHmM+iLEdxWzJkqmt0PU="  https://uat-api.nets.com.sg:9443/sit/merchantservices/v2/transaction/search -d '{"mti": "0100","process_code": "500000","search_count": "1","host_tid": "80544001","host_mid": "11180544000"}'
+
+
+bE7tPL5A4oRfqI5YFnevXoPdLFdhFRG6xhNbSq2bUng=
