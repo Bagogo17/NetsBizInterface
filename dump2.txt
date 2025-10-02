@@ -234,3 +234,14 @@ curl -v -k -X POST -H "Content-Type: application/json"  -H "KeyId: aa06639e-2233
 
 
 bE7tPL5A4oRfqI5YFnevXoPdLFdhFRG6xhNbSq2bUng=
+
+
+public static void main(String[] args) throws NoSuchAlgorithmException {
+        System.out.println("args = " + args);
+        System.out.println("Signature Generator");
+        String payload = "{\"mti\": \"0100\",\"process_code\": \"500000\",\"search_count\": \"1\",\"host_tid\": \"38018101\",\"host_mid\": \"11138018100\"}2f966234-28d1-4b4b-acb3-ff41b590f6ec";
+        MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+        byte[] hashBytes = messageDigest.digest(payload.getBytes(StandardCharsets.UTF_8));
+        String signature = Base64.getEncoder().encodeToString(hashBytes);
+        System.out.println("signature = " + signature);
+    }
