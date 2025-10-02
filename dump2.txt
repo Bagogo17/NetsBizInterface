@@ -226,3 +226,5 @@ export const configureTtsLanguageAndVoice = async () => {
     }
 };
 
+
+curl -v -k -X POST -H "Content-Type: application/json"  -H "KeyId: aa06639e-2233-41df-8d95-7ae5f41ee9c1" -H "Sign: EvbslQmySZ/QaICzQP6S2fnyCvCnMyRCgA6yDUm3zg8="  https://uat-api.nets.com.sg:9443/sit/merchantservices/v1/device/logon -d '{"mti":"0800","process_code":"930000","stan":"841796","transaction_date":"0728","transaction_time":"112410","host_tid":"46287801","host_mid":"11146287800","npx_data":{"E103":"46287801"},"communication_data":[{"type":"https_proxy","category":"URL"}]}'
